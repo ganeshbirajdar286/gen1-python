@@ -1,0 +1,26 @@
+# LangChain ecosystem
+langchain
+langchain-core
+langchain-community
+langgraph
+
+# LLM integrations
+langchain-openai
+langchain-groq
+langchain-mistralai
+langchain-google-genai
+
+# HuggingFace
+langchain-huggingface
+
+# Vector DB + tokens
+faiss-cpu
+tiktoken
+
+# API server
+fastapi
+uvicorn
+
+# Utilities
+python-dotenv
+requests
