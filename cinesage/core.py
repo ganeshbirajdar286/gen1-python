@@ -1,25 +1,30 @@
 from dotenv import load_dotenv
 from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
+from pydantic  import BaseModel
+from typing import List,Optional
+from langchain_core.output_parsers import PydanticOutputParser
+
 load_dotenv()
+
+class Movie(BaseModel):
+    title:str
+    release_year:Optional[int]
+    genre:List[str]
+    director:Optional[str]
+    cast:List[str]
+    rating:List[float]
+    summary:str
+
+parser=PydanticOutputParser(pydantic_object=Movie) # this is use for check the movie all value are fill properly 
 model = ChatMistralAI(model = "mistral-small-2506")
 
 prompt_template = ChatPromptTemplate.from_messages([
-     ("system", """
-You are an AI that extracts structured information from movie descriptions.
-
-Extract the following:
-- Movie Name
-- Director
-- Release Year
-- Main Cast
-- Plot Summary (short)
-- Key Highlights (rating, music, achievements)
-
-Only use the given text. Do not guess.
-Return answer in clean readable format (not JSON).
+     ('system',"""
+Extract movie information from the paragraph
+     {format_instructions}
 """),
-    ("human", "{input}")
+("human","{paragraph}")
 ])
 
 while True:
@@ -29,7 +34,7 @@ while True:
         break
 
     # 🔥 format prompt
-    prompt = prompt_template.invoke({"input": user_input})
+    prompt = prompt_template.invoke({"paragraph": user_input,"format_instructions":parser.get_format_instructions()})
 
     # 🔥 call model
     result = model.invoke(prompt)
